@@ -39,14 +39,14 @@ export default function ScanPage() {
     }
 
     const getLiquorDetails = async (code: string) => {
-        //const liquor = await getLiquorData(code);
-        const liquor = {
-            "Name": "Vinho Chileno Branco Alto Los Romeros Sauvignon Blanc 750ml",
-            "Photo_link": "https://go-upc.s3.amazonaws.com/images/130378927.jpeg",
-            "Description": "As notas cítricas, maçã verde e toques de ervas dominam o paladar, dando um caráter varietal intenso e tensão. Tem excelente persistência, médio corpo e acidez, criando um vinho equilibrado e refrescante.",
-            "Additional_attributes": "Vintage:",
-            "isbn": "7804414004844"
-        };
+        const liquor = await getLiquorData(code);
+        // const liquor = {
+        //     "Name": "Vinho Chileno Branco Alto Los Romeros Sauvignon Blanc 750ml",
+        //     "Photo_link": "https://go-upc.s3.amazonaws.com/images/130378927.jpeg",
+        //     "Description": "As notas cítricas, maçã verde e toques de ervas dominam o paladar, dando um caráter varietal intenso e tensão. Tem excelente persistência, médio corpo e acidez, criando um vinho equilibrado e refrescante.",
+        //     "Additional_attributes": "Vintage:",
+        //     "isbn": "7804414004844"
+        // };
         
         const liquorDataTranstalted = await translateLiquorData(liquor);
         setLiquor(liquorDataTranstalted);
@@ -77,7 +77,7 @@ export default function ScanPage() {
           {recipe && (
             <div className="w-full max-w-md bg-white rounded-lg shadow-md p-6">
               <h2 className="text-2xl font-bold text-orange-600 mb-4">{recipe.cocktailName}</h2>
-              <h3 className="text-xl font-semibold mb-2">Ingredients:</h3>
+              <h3 className="text-xl font-semibold mb-2">Ingredientes:</h3>
               <ul className="list-disc list-inside mb-4">
                 {recipe.ingredients.map((ingredient, index) => (
                   <li key={index} className="text-gray-700">
@@ -85,7 +85,7 @@ export default function ScanPage() {
                   </li>
                 ))}
               </ul>
-              <h3 className="text-xl font-semibold mb-2">Steps:</h3>
+              <h3 className="text-xl font-semibold mb-2">Preparación:</h3>
               <ol className="list-decimal list-inside mb-4">
                 {recipe.steps.map((step, index) => (
                   <li key={index} className="text-gray-700">{step}</li>
@@ -93,7 +93,7 @@ export default function ScanPage() {
               </ol>
               {recipe.observations && (
                 <div>
-                  <h3 className="text-xl font-semibold mb-2">Observations:</h3>
+                  <h3 className="text-xl font-semibold mb-2">Observaciones:</h3>
                   <p className="text-gray-700">{recipe.observations}</p>
                 </div>
               )}
