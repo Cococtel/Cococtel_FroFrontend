@@ -10,7 +10,7 @@ const videoConstraints: MediaTrackConstraints = {
 };
 
 interface WebcamCaptureProps {
-  text: string;
+  liquor: Liquor | null;
   handleSendImage: (image: string) => Promise<void>;
   loading: {
     loading: boolean;
@@ -18,7 +18,7 @@ interface WebcamCaptureProps {
   };
 }
 
-const WebcamCapture: React.FC<WebcamCaptureProps> = ({ handleSendImage, text, loading }) => {
+const WebcamCapture: React.FC<WebcamCaptureProps> = ({ handleSendImage, liquor, loading }) => {
   const [image, setImage] = React.useState<string | null>(null);
   const [cameraOpen, setCameraOpen] = React.useState(false);
   const webcamRef = React.useRef<Webcam>(null);
@@ -46,7 +46,7 @@ const WebcamCapture: React.FC<WebcamCaptureProps> = ({ handleSendImage, text, lo
       {cameraOpen || image ? (
         <div className="relative border-2 border-dashed border-orange-300 rounded-lg overflow-hidden w-full h-64 flex items-center justify-center">
           {image ? (
-            text ? (
+            liquor?.Name  ? (
               <div className="flex flex-col items-center justify-center text-orange-500">
                 <Check size={48} className="mb-2" />
                 <p className="text-lg font-bold">Listo! Estamos preparando tu coctel...</p>
@@ -93,7 +93,7 @@ const WebcamCapture: React.FC<WebcamCaptureProps> = ({ handleSendImage, text, lo
         </button>
       )}
 
-      {image && !text && (
+      {image && !liquor?.Name  && (
         <div className="flex gap-4 mt-4 justify-center">
           <button
             onClick={() => setImage(null)}
@@ -110,7 +110,7 @@ const WebcamCapture: React.FC<WebcamCaptureProps> = ({ handleSendImage, text, lo
         </div>
       )}
 
-      {!text && (
+      {!liquor?.Name && (
         <div className="mt-4">
           <label className="w-full bg-gray-100 text-gray-700 px-4 py-2 rounded-lg flex items-center justify-center gap-2 shadow-md hover:bg-gray-200 transition-colors cursor-pointer">
             <Upload size={20} /> Upload Image

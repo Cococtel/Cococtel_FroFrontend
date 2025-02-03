@@ -3,10 +3,8 @@ import WebcamCapture from './WebcamCapture';
 import React, { useEffect } from 'react';
 
 export default function ScanPage() {
-    const [stringsExtracted, setStringsExtracted] = React.useState<string[]>([]);
     const [image, setImage] = React.useState<string | null>(null);
     const [liquor, setLiquor] = React.useState<Liquor | null>(null);
-    const [text, setText] = React.useState<string>("");
     const [loading, setLoading] = React.useState({loading: false, text: ""});
     const [recipe, setRecipe] = React.useState<Cocktail | null>(null);
 
@@ -32,14 +30,16 @@ export default function ScanPage() {
 
     const getTextFromImage = async (base64Image: string) => {
         const text = await extractTextFromImage(base64Image);
-        const filteredText = text.map((str:any) => str.replace(/\s/g, ""))
-        .filter((str:any) => str.replace(/\D/g, "").length === 13);
+        const filteredText = text.map((str: any) => str.replace(/\s/g, ""))
+        .map((str: any) => str.match(/\d{13}/)?.[0]) // Extract only 13-digit numbers
+        .filter(Boolean);
 
         getLiquorDetails(filteredText[0]);
     }
 
     const getLiquorDetails = async (code: string) => {
-        const liquor = await getLiquorData(code);
+        const cleanCode = encodeURIComponent(code.trim());
+        const liquor = await getLiquorData(cleanCode);
         // const liquor = {
         //     "Name": "Vinho Chileno Branco Alto Los Romeros Sauvignon Blanc 750ml",
         //     "Photo_link": "https://go-upc.s3.amazonaws.com/images/130378927.jpeg",
@@ -64,11 +64,11 @@ export default function ScanPage() {
           <p className="mb-6 text-gray-600">Descubre cocteles y recetas basados en lo que tienes. Escánea o sube una foto!</p>
         </div>
         <div className="flex flex-col items-center gap-6">
-          <WebcamCapture handleSendImage={handleSendImage} text={text} loading={loading} />
+          <WebcamCapture handleSendImage={handleSendImage} liquor={liquor} loading={loading} />
           {liquor && (
             <div className="w-full max-w-md bg-white rounded-lg shadow-md p-6">
               <h2 className="text-2xl font-bold text-orange-600 mb-4">{liquor.Name}</h2>
-                <img src={liquor.Photo_link} alt={liquor.Name} className="w-1/3 mx-auto object-cover rounded-lg mb-4" />
+              {liquor.Name !== "Nombre no encontrado" && (<img src={liquor.Photo_link} alt={liquor.Name} className="w-1/3 mx-auto object-cover rounded-lg mb-4" /> )}
               <h3 className="text-xl font-semibold mb-2">Descripción:</h3>
               <p className="text-gray-700 mb-4">{liquor.Description}</p>
             </div>
