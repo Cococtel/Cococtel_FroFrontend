@@ -6,7 +6,7 @@ import { LoaderCircle } from 'lucide-react';
 const videoConstraints: MediaTrackConstraints = {
   width: 720,
   height: 480,
-  facingMode: "user",
+  facingMode: "environment",
 };
 
 interface WebcamCaptureProps {
