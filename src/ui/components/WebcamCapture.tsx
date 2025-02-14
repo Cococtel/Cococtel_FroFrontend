@@ -40,8 +40,8 @@ const WebcamCapture: React.FC<WebcamCaptureProps> = ({ handleSendImage, liquor, 
   };
 
   return (
-    <div className="w-full max-w-md bg-white rounded-lg shadow-md p-6">
-      <h2 className="text-xl font-bold text-gray-700 mb-4 text-center">Toma una foto o sube una imagen</h2>
+    <div className="w-full max-w-md">
+      <h2 className="text-xl font-bold text-gray-700 mb-4">Toma una foto o sube una</h2>
 
       {cameraOpen || image ? (
         <div className="relative border-2 border-dashed border-orange-300 rounded-lg overflow-hidden w-full h-64 flex items-center justify-center">

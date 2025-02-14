@@ -12,13 +12,17 @@
     "@astrojs/react": "^4.2.0",
     "@astrojs/tailwind": "^5.1.5",
     "@astrojs/vercel": "^8.0.5",
+    "@tiptap/react": "^2.11.5",
+    "@tiptap/starter-kit": "^2.11.5",
     "@types/react": "^19.0.8",
     "@types/react-dom": "^19.0.3",
     "astro": "^5.1.10",
+    "framer-motion": "^12.4.2",
     "lucide-react": "^0.474.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-webcam": "^7.2.0",
+    "sonner": "^1.7.4",
     "tailwindcss": "^3.4.17"
   }
 }

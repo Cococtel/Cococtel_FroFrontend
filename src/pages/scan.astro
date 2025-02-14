@@ -4,7 +4,9 @@ import Layout from '../ui/layouts/Layout.astro'
 ---
 
 <Layout>
-    <section class="max-w-xl mx-auto w-full">
+    <section class="w-full min-h-screen p-4">
+        <h1 class="text-2xl font-bold mt-3 text-[#eb6b50]">Escaner</h1>
+        <p class="my-12 text-gray-600">Descubre cocteles y recetas basados en lo que tienes. Escánea o sube una foto!</p>
         <Scanner client:load />
     </section>
 </Layout>

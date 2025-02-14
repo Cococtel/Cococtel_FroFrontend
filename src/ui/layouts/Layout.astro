@@ -1,5 +1,6 @@
 ---
 import Sidebar from "../components/Sidebar";
+import { Toaster } from 'sonner'
 ---
 
 <!doctype html>
@@ -16,13 +17,15 @@ import Sidebar from "../components/Sidebar";
 	</head>
 	<body>
 		<div class="flex">
+			<a href="/profile" class="w-12 h-12 flex items-center justify-center text-2xl text-white rounded-full bg-[#eb6b50] absolute top-5 right-5">T</a>
+			<Toaster client:load />
 			<Sidebar client:visible />
 			<slot />
 		</div>
 	</body>
 </html>
 
-<style>
+<style is:global>
 	html,
 	body {
 		margin: 0;
@@ -32,5 +35,31 @@ import Sidebar from "../components/Sidebar";
 
 	* {
 		font-family: 'Poppins', sans-serif;
+	}
+
+	.ProseMirror{
+		min-height: 240px;
+	}
+
+	.ProseMirror h1{
+		font-size: 2rem;
+	}
+
+	.ProseMirror h2{
+		font-size: 1.7rem;
+	}
+
+	.ProseMirror h3{
+		font-size: 1.5rem;
+	}
+
+	.ProseMirror ul{
+		list-style-type: disc;
+		margin-left: 20px;
+	}
+
+	.ProseMirror ol{
+		list-style-type: decimal;
+		margin-left: 20px;
 	}
 </style>

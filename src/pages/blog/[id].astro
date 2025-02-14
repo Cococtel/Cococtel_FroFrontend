@@ -1,0 +1,35 @@
+---
+import { number } from 'astro:schema';
+import { examplePosts } from '../../features/blog/constants/examplePosts';
+import Layout from '../../ui/layouts/Layout.astro';
+
+
+export async function getStaticPaths() {
+  return examplePosts.map((post:any) => ({
+    params: { id: post.id }
+  }));
+}
+
+const { id } = Astro.params;
+const post = examplePosts.find((p) => p.id === Number(id));
+
+if (!post) {
+  throw new Error(`Post with id ${id} not found`);
+}
+---
+
+<Layout>
+    <div class="container mx-auto px-4 py-16">
+      <article class="max-w-3xl mx-auto">
+        <header class="mb-6">
+            <h1 class="text-4xl font-bold mb-10 text-[#eb6b50]">{post.title}</h1>
+            <img src={post.image} alt={post.title} class="w-full h-auto rounded-md mb-4" />
+            <p class="text-sm text-gray-600">By {post.author} on {post.createdAt}</p>
+        </header>
+        <section class="prose prose-lg ProseMirror">
+            <div set:html={post.content}></div>
+        </section>
+      </article>
+    </div>
+  </Layout>
+  

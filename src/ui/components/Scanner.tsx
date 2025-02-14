@@ -58,11 +58,7 @@ export default function ScanPage() {
     }
 
     return (
-      <div className="w-full min-h-screen p-4 mt-5 md:p-10 mb-20">
-        <div className="w-full text-center">
-          <h1 className="font-bold mb-4 text-orange-600 text-3xl">Escánea el código de barras de tu Licor</h1>
-          <p className="mb-6 text-gray-600">Descubre cocteles y recetas basados en lo que tienes. Escánea o sube una foto!</p>
-        </div>
+      <div className="w-full mt-5 mb-20">
         <div className="flex flex-col items-center gap-6">
           <WebcamCapture handleSendImage={handleSendImage} liquor={liquor} loading={loading} />
           {liquor && (

@@ -5,10 +5,10 @@ export default function BottomNav() {
   const [active, setActive] = useState('Dashboard');
 
   const menuItems = [
-    { name: 'Dashboard', icon: <Home className="text-[#f97316]" />, link: '#' },
+    { name: 'Dashboard', icon: <Home className="text-[#f97316]" />, link: '/home' },
     { name: 'Scan', icon: <Scan className="text-[#f97316]" />, link: '/scan' },
-    { name: 'Community', icon: <Users className="text-[#f97316]" />, link: '#' },
-    { name: 'Profile', icon: <User className="text-[#f97316]" />, link: '#' }
+    { name: 'Community', icon: <Users className="text-[#f97316]" />, link: '/community' },
+    { name: 'Profile', icon: <User className="text-[#f97316]" />, link: '/profile' }
   ];
 
   return (
