@@ -28,7 +28,13 @@ export default function RegisterPage() {
     const response = await registerUser(user);
     
     if (response.data && response.data.register && response.data.register.data) {
+
         toast.success('Usuario creado correctamente');
+
+        setTimeout(() => {
+          window.location.href = '/';
+        }, 1000);
+
         return;
     } 
             
