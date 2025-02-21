@@ -18,6 +18,12 @@ export default function ProfilePage() {
         { id: 3, title: "Piña Colada", image: "https://source.unsplash.com/100x100/?pina-colada", author: "John Doe" },
     ];
 
+    const handleLogout = () => {
+        console.log("Logging out...");
+        document.cookie = "auth-token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+        window.location.reload();
+    }
+
     return (
         <div className="w-full min-h-screen bg-gray-100 pb-10">
             {/* Cover Image */}
@@ -62,7 +68,10 @@ export default function ProfilePage() {
                     <button className="flex items-center gap-2 bg-[#eb6b50] text-white px-4 py-2 rounded-full shadow-md">
                         <Edit size={16} /> Edit Profile
                     </button>
-                    <button className="flex items-center gap-2 bg-gray-200 px-4 py-2 rounded-full shadow-md text-gray-700">
+                    <button 
+                        className="flex items-center gap-2 bg-gray-200 px-4 py-2 rounded-full shadow-md text-gray-700"
+                        onClick={handleLogout}
+                    >
                         <LogOut size={16} /> Log Out
                     </button>
                 </div>

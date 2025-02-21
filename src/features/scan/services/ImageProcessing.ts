@@ -1,3 +1,5 @@
+import { GRAPHQL_API_ENDPOINT, GRAPHQL_API_KEY } from 'astro:env/client'
+
 export async function translateLiquorData(liquor: Liquor)
 {
     const apiUrl = "https://aiservicesms-efgmfubkcdggh9hc.canadacentral-01.azurewebsites.net/api/AI/TranslateLiquorDetails";
@@ -26,53 +28,83 @@ export async function translateLiquorData(liquor: Liquor)
 
 export async function getLiquorData(code: string)
 {
-    const apiUrl = "https://scrapingms-a6fdc6g6hxc9e7ae.canadacentral-01.azurewebsites.net/product/" + code;
+    const query = `
+        query GetProductByCode($code: String!) {
+            getProductByCode(code: $code) {
+                data {
+                    name
+                    photo_link
+                    description
+                    additional_attributes
+                    isbn
+                }
+                error {
+                    message
+                    status
+                }
+            }
+        }
+    `;
+
+    const variables = { code };
 
     try {
-
-        const response = await fetch(apiUrl, {
-            method: "GET",
+        const response = await fetch(GRAPHQL_API_ENDPOINT || '', {
+            method: 'POST',
             headers: {
-                "Content-Type": "application/json",
-            }
+                'Content-Type': 'application/json',
+                'x-api-key': GRAPHQL_API_KEY || '',
+            },
+            body: JSON.stringify({ query, variables }),
         });
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-        
         const result = await response.json();
-        
         return result;
     } catch (error) {
-        console.error("Error extracting text from image:", error);
-        return null;
+        return error;
     }
 }
 
 export async function createCocktail(liquor: string)
 {
-    const apiUrl = "https://aiservicesms-efgmfubkcdggh9hc.canadacentral-01.azurewebsites.net/api/AI/CreateRecipe?liquor=" + liquor;
+    const mutation = `
+        mutation CreateAIRecipe($liquor: String!) {
+            createAIRecipe(liquor: $liquor) {
+                data {
+                    cocktailName
+                    ingredients {
+                        name
+                        quantity
+                    }
+                    steps
+                    observations
+                }
+                error {
+                    message
+                    status
+                }
+            }
+        }
+    `;
+    
+    const variables = { liquor };
 
     try {
-
-        const response = await fetch(apiUrl, {
-            method: "POST",
+        const response = await fetch(GRAPHQL_API_ENDPOINT || '', {
+            method: 'POST',
             headers: {
-                "Content-Type": "application/json",
-            }
+                'Content-Type': 'application/json',
+                'x-api-key': GRAPHQL_API_KEY || '',
+            },
+            body: JSON.stringify({ query: mutation, variables }),
         });
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-        
         const result = await response.json();
-        
+        console.log(result);
         return result;
     } catch (error) {
-        console.error("Error extracting text from image:", error);
-        return null;
+        console.log(error);
+        return error;
     }
 }
 

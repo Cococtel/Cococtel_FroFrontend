@@ -1,3 +1,4 @@
+import { toast } from 'sonner';
 import { createCocktail, extractTextFromImage, getLiquorData, translateLiquorData } from '../../features/scan/services/ImageProcessing';
 import WebcamCapture from './WebcamCapture';
 import React, { useEffect } from 'react';
@@ -31,24 +32,46 @@ export default function ScanPage() {
     const getTextFromImage = async (base64Image: string) => {
         const text = await extractTextFromImage(base64Image);
         const filteredText = text.map((str: any) => str.replace(/\s/g, ""))
-        .map((str: any) => str.match(/\d{13}/)?.[0]) // Extract only 13-digit numbers
-        .filter(Boolean);
+          .map((str: any) => str.match(/\d{13}/)?.[0]) // Extract only 13-digit numbers
+          .filter(Boolean);
 
         getLiquorDetails(filteredText[0]);
     }
 
     const getLiquorDetails = async (code: string) => {
+        if(!code)
+        {
+            toast.error("Código no encontrado");
+            
+            setTimeout(() => {
+              window.location.reload();
+            }, 1000);
+            return;
+        }
+
         const cleanCode = encodeURIComponent(code.trim());
-        const liquor = await getLiquorData(cleanCode);
-        // const liquor = {
-        //     "Name": "Vinho Chileno Branco Alto Los Romeros Sauvignon Blanc 750ml",
-        //     "Photo_link": "https://go-upc.s3.amazonaws.com/images/130378927.jpeg",
-        //     "Description": "As notas cítricas, maçã verde e toques de ervas dominam o paladar, dando um caráter varietal intenso e tensão. Tem excelente persistência, médio corpo e acidez, criando um vinho equilibrado e refrescante.",
-        //     "Additional_attributes": "Vintage:",
-        //     "isbn": "7804414004844"
-        // };
+        //const liquor = await getLiquorData(cleanCode);
         
-        const liquorDataTranstalted = await translateLiquorData(liquor);
+        const liquor = {
+            data: {
+                getProductByCode: {
+                    data: {
+                        "Name": "Vinho Chileno Branco Alto Los Romeros Sauvignon Blanc 750ml",
+                        "Photo_link": "https://go-upc.s3.amazonaws.com/images/130378927.jpeg",
+                        "Description": "As notas cítricas, maçã verde e toques de ervas dominam o paladar, dando um caráter varietal intenso e tensão. Tem excelente persistência, médio corpo e acidez, criando um vinho equilibrado e refrescante.",
+                        "Additional_attributes": "Vintage:",
+                        "isbn": "7804414004844"
+                    }
+                }
+            }
+        };
+        
+        if(!liquor.data || !liquor.data.getProductByCode || !liquor.data.getProductByCode.data) 
+        {
+            toast.error("Producto no encontrado");
+        }
+    
+        const liquorDataTranstalted = await translateLiquorData(liquor.data.getProductByCode.data);
         setLiquor(liquorDataTranstalted);
     }
 
@@ -75,7 +98,7 @@ export default function ScanPage() {
               <h2 className="text-2xl font-bold text-orange-600 mb-4">{recipe.cocktailName}</h2>
               <h3 className="text-xl font-semibold mb-2">Ingredientes:</h3>
               <ul className="list-disc list-inside mb-4">
-                {recipe.ingredients.map((ingredient, index) => (
+                {recipe.ingredients?.map((ingredient, index) => (
                   <li key={index} className="text-gray-700">
                     {ingredient.quantity} of {ingredient.name}
                   </li>
@@ -83,7 +106,7 @@ export default function ScanPage() {
               </ul>
               <h3 className="text-xl font-semibold mb-2">Preparación:</h3>
               <ol className="list-decimal list-inside mb-4">
-                {recipe.steps.map((step, index) => (
+                {recipe.steps?.map((step, index) => (
                   <li key={index} className="text-gray-700">{step}</li>
                 ))}
               </ol>
