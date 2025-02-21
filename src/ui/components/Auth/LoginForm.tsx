@@ -33,8 +33,8 @@ export default function LoginForm() {
   };
 
   return (
-    <div className="container mx-auto p-4">
-      <div className="max-w-lg mx-auto bg-white rounded-xl shadow-md p-8">
+    <div className="container mx-auto p-4 h-screen flex justify-center items-center">
+      <div className="max-w-lg w-full mx-auto bg-white rounded-xl shadow-md p-8">
         <h1 className="text-3xl font-bold text-center mb-6 text-[#eb6b50]">Iniciar Sesión</h1>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
