@@ -4,8 +4,9 @@ import { motion } from "framer-motion";
 import TiptapEditor from "./TipTapEditor";
 import { toast } from "sonner";
 import { postValidator } from "../../../features/blog/services/postValidator";
+import { savePost } from "../../../features/blog/services/postService";
 
-export default function FloatingForm() {
+export default function FloatingForm( { token, user } : { token: string, user: string } ) {
     const [showForm, setShowForm] = useState(false);
     const [imagePreview, setImagePreview] = useState<string | null>(null);
 
@@ -38,15 +39,13 @@ export default function FloatingForm() {
             return;
         }
 
-        const post = {
+        const post: SavePost = {
             title,
             content,
-            author: "currentUser", 
-            createdAt: new Date(),
-            image
+            urlImage: image || "",
         };
 
-        console.log(post);
+        savePost(post, token);
 
         toast.success("Post creado correctamente");
         setShowForm(false);

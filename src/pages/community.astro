@@ -2,18 +2,25 @@
 import Layout from "../ui/layouts/Layout.astro";
 import PostButton from "../ui/components/Community/PostButton";
 import { Bookmark } from "lucide-react";
-import { examplePosts } from "../features/blog/constants/examplePosts";
 import LatestPosts from "../ui/components/LatestPosts.astro";
+import { getPosts } from "../features/blog/services/postService";
+
+const token = Astro.cookies.get("auth-token")?.value || "";
+const user = Astro.cookies.get("user-id")?.value || "";
+
+
+const posts = await getPosts();
+console.log(posts.data.posts.data);
 ---
 
 <Layout>
   <div class="w-full min-h-screen p-4">
     <h1 class="text-2xl font-bold mt-3 text-[#eb6b50]">Comunidad</h1>
-    <PostButton client:load />
+    <PostButton token={token} user={user} client:load />
     
     <div class="w-full overflow-hidden my-10">
       <div class="carousel flex space-x-4 overflow-x-auto whitespace-nowrap scrollbar-hide w-full">
-        {examplePosts.slice(0, 4).map((post, index) => (
+        {posts.data.posts.data && posts.data.posts.data.slice(0, 4).map((post:any, index:number) => (
             <a
               href={`/blog/${post.id}`}
               class="w-[calc(100%-40px)] aspect-square bg-gray-300 flex-shrink-0 rounded-xl relative"
@@ -30,7 +37,7 @@ import LatestPosts from "../ui/components/LatestPosts.astro";
                 {post.content.replace(/<\/?[^>]+(>|$)/g, "").split(" ").slice(0,8).join(" ") + "..."}
                 </p>
                 <p class="text-xs">
-                By <strong>{post.author}</strong> on <strong>{new Date(post.createdAt).toLocaleDateString()}</strong>
+                Por <strong>{post.author}</strong> on <strong>{new Date(post.createdAt).toLocaleDateString()}</strong>
                 </p>
               </div>
               <button class="absolute bottom-2 right-2 text-white p-2 rounded-full shadow-md">

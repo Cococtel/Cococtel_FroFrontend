@@ -3,7 +3,7 @@ import type { UserLogin } from '../../../features/auth/dtos/loginDto';
 import { loginUser } from '../../../features/auth/services/authService';
 import { toast } from "sonner";
 
-export default function LoginForm() {
+export default function LoginForm( { redirectTo }: {redirectTo: string} ) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
@@ -19,11 +19,15 @@ export default function LoginForm() {
     const response = await loginUser(login);
     
     if (response.data && response.data.login && response.data.login.data && response.data.login.data.token) {
+        const tokenData = JSON.parse(atob(response.data.login.data.token.split('.')[1]));
+        
         document.cookie = `auth-token=${response.data.login.data.token}; path=/; max-age=86400; samesite=strict;`;
+        document.cookie = `user-id=${tokenData.user}; path=/; max-age=86400; samesite=strict;`;
+        
         toast.success('Usuario autenticado correctamente');
         
         setTimeout(() => {
-          window.location.href = '/home';
+            window.location.href = redirectTo;
         }, 1000);
         
         return;

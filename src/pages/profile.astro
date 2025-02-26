@@ -1,8 +1,11 @@
 ---
 import Layout from "../ui/layouts/Layout.astro";
 import ProfilePage from "../ui/components/Profile";
+
+const token = Astro.cookies.get("auth-token")?.value || "";
+const user = Astro.cookies.get("user-id")?.value || "";
 ---
 
 <Layout>
-    <ProfilePage client:load />
+    <ProfilePage token={token} user={user} client:load />
 </Layout>

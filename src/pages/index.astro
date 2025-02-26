@@ -1,6 +1,7 @@
 ---
 import { Toaster } from "sonner";
 import LoginForm from "../ui/components/Auth/LoginForm";
+const redirectTo = Astro.request.headers.get("x-redirect-to") || "/home";
 ---
 <html lang="en">
   <head>
@@ -16,6 +17,6 @@ import LoginForm from "../ui/components/Auth/LoginForm";
   </head>
   <body>
       <Toaster client:load />
-      <LoginForm client:load />
+      <LoginForm redirectTo={redirectTo} client:load />
   </body>
 </html>
