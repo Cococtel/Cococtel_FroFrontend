@@ -25,6 +25,7 @@ export const loginUser = async (user: UserLogin) => {
 }
 
 export const verifyUserLoginStatus = async (token: string) => {
+    console.log(token);
     return await graphqlRequest(verify_user, { token });
 };
   

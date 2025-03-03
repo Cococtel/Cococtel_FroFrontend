@@ -18,8 +18,7 @@ async function protectedRoutesMiddleware (context: any, next:any) {
             }));
         }
 
-        const tokenValue = token.value.startsWith('Bearer ') ? token.value : `Bearer ${token.value}`;
-        const isValid = await verify(tokenValue);
+        const isValid = await verify(token.value);
 
         if (!isValid)
             return context.rewrite(new Request(new URL("/", context.url), {
@@ -37,8 +36,7 @@ async function publicRoutesMiddleware (context: any, next:any) {
         const token = context.cookies.get('auth-token');
         
         if (token) {
-            const tokenValue = token.value.startsWith('Bearer ') ? token.value : `Bearer ${token.value}`;
-            const isValid = await verify(tokenValue);
+            const isValid = await verify(token.value);
             
             if (isValid) {
                 return context.redirect('/home');

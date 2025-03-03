@@ -1,0 +1,30 @@
+---
+import LatestPosts from "../ui/components/Cocktails/LatestPosts";
+import FeaturedPosts from "../ui/components/Cocktails/FeaturedPosts";
+import Layout from "../ui/layouts/Layout.astro";
+import CocktailButton from "../ui/components/Cocktails/CocktailButton";
+import { getAllRecipes } from "../features/cocktails/services/RecipesService";
+
+const token = Astro.cookies.get('auth-token')?.value || '';
+const user = Astro.cookies.get('user-id')?.value || '';
+var recipes:any = [];
+
+const response = await getAllRecipes();
+
+if(response.data && response.data.recipes && response.data.recipes.data.length > 0) {
+    const data = response.data.recipes.data;
+    recipes = data;
+}
+---
+
+<Layout>
+    <div class="flex justify-between items-center m-4 mb-0">
+        <h1 class="text-2xl font-bold mt-3 text-[#eb6b50]">Cócteles</h1>
+    </div>
+    <div class="w-full p-4">
+        <FeaturedPosts client:load />
+        <h2 class="text-[#eb6b50] text-xl font-bold mb-2">Últimos Cócteles</h2>
+        <LatestPosts recipes={recipes} client:load />
+        <CocktailButton user={user} client:load />
+    </div>
+</Layout>

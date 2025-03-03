@@ -1,0 +1,47 @@
+---
+import Layout from '../../ui/layouts/Layout.astro';
+import sweet from "../../assets/img/sweet.webp";
+import sour from "../../assets/img/sour.webp";
+import bitter from "../../assets/img/bitter.webp";
+import exotic from "../../assets/img/exotic.webp";
+import { getAllRecipes } from '../../features/cocktails/services/RecipesService';
+import CocktailSearch from '../../ui/components/Cocktails/CocktailSearch';
+
+const categories = [
+    { id: 1, name: 'dulces', image: sweet.src, value: 'sweet' },
+    { id: 2, name: 'acidos', image: sour.src, value: 'sour' },
+    { id: 3, name: 'amargos', image: bitter.src, value: 'bitter' },
+    { id: 4, name: 'exoticos', image: exotic.src, value: 'exotic' }
+];
+
+export async function getStaticPaths() {
+    return categories.map((category) => {
+        return {
+            params: {
+                id: category.id.toString()
+            }
+        }
+    });
+}
+
+const { id } = Astro.params;
+var recipes:any = [];
+
+const responseRecipes = await getAllRecipes();
+
+if(responseRecipes.data && responseRecipes.data.recipes && responseRecipes.data.recipes.data.length > 0) {
+    const data = responseRecipes.data.recipes.data;
+    recipes = data.filter((recipe:any) => recipe.category === id);
+}
+---
+
+<Layout>
+    <div class="p-4 mb-20">
+        <div class="flex justify-between items-center mb-10">
+            <h1 class="text-2xl font-bold mt-3 text-[#eb6b50]">
+                Cócteles {(categories.find((category) => category.value === id) || {}).name || 'Unknown'} 
+            </h1>
+        </div>
+        <CocktailSearch recipes={recipes} client:load />
+    </div>
+</Layout>

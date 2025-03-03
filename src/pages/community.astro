@@ -2,51 +2,55 @@
 import Layout from "../ui/layouts/Layout.astro";
 import PostButton from "../ui/components/Community/PostButton";
 import { Bookmark } from "lucide-react";
-import LatestPosts from "../ui/components/LatestPosts.astro";
+import LatestPosts from "../ui/components/Cocktails/LatestPosts";
 import { getPosts } from "../features/blog/services/postService";
+import { getAllRecipes } from "../features/cocktails/services/RecipesService";
 
 const token = Astro.cookies.get("auth-token")?.value || "";
 const user = Astro.cookies.get("user-id")?.value || "";
 
+var posts:any = [];
 
-const posts = await getPosts();
-console.log(posts.data.posts.data);
+const response = await getPosts();
+console.log(response);
+if(response.data && response.data.posts && response.data.posts.data.length > 0) {
+    const data = response.data.posts.data;
+    posts = data;
+}
 ---
 
 <Layout>
-  <div class="w-full min-h-screen p-4">
-    <h1 class="text-2xl font-bold mt-3 text-[#eb6b50]">Comunidad</h1>
+  <div class="w-full min-h-screen p-4 mb-20">
+    <h1 class="text-2xl font-bold mt-3 text-[#eb6b50]">Blogs Cococtel</h1>
     <PostButton token={token} user={user} client:load />
     
-    <div class="w-full overflow-hidden my-10">
-      <div class="carousel flex space-x-4 overflow-x-auto whitespace-nowrap scrollbar-hide w-full">
-        {posts.data.posts.data && posts.data.posts.data.slice(0, 4).map((post:any, index:number) => (
+    <div class="w-full overflow-hidden my-10 mb-16">
+      <div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {posts && posts.map((post:any, index:number) => (
             <a
-              href={`/blog/${post.id}`}
-              class="w-[calc(100%-40px)] aspect-square bg-gray-300 flex-shrink-0 rounded-xl relative"
-              style={{
-                backgroundImage: `url(${post.image})`,
-                backgroundSize: "cover",
-                backgroundPosition: "center",
-              }}
+              href={`/blog/${post._id}`}
+              class="bg-white rounded-lg shadow-md overflow-hidden"
             >
-              <div class="absolute inset-0 bg-gradient-to-t from-black to-transparent opacity-75 rounded-xl"></div>
-              <div class="absolute bottom-0 p-4 text-white">
-                <h2 class="text-xl font-bold">{post.title}</h2>
-                <p class="text-sm break-words whitespace-normal mb-2">
-                {post.content.replace(/<\/?[^>]+(>|$)/g, "").split(" ").slice(0,8).join(" ") + "..."}
+              <div
+                class="h-48 bg-cover bg-center"
+                style={{
+                  backgroundImage: `url(${post.urlImage})`,
+                }}
+              ></div>
+              <div class="p-4">
+                <h2 class="text-xl font-bold text-gray-800">{post.title}</h2>
+                <p class="text-gray-600 text-sm mt-2">
+                  {post.content.replace(/<\/?[^>]+(>|$)/g, "").split(" ").slice(0, 20).join(" ") + "..."}
                 </p>
-                <p class="text-xs">
-                Por <strong>{post.author}</strong> on <strong>{new Date(post.createdAt).toLocaleDateString()}</strong>
+                <p class="text-gray-500 text-xs mt-4">
+                  Por <strong>{post.author}</strong> on <strong>{new Date(post.createdAt).toLocaleDateString()}</strong>
                 </p>
               </div>
-              <button class="absolute bottom-2 right-2 text-white p-2 rounded-full shadow-md">
-                <Bookmark />
-              </button>
             </a>
-        ))}
+          ))}
+        </div>
       </div>
-      <LatestPosts />
   </div>
 </Layout>
 

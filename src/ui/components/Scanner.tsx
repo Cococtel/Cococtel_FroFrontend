@@ -1,13 +1,15 @@
 import { toast } from 'sonner';
-import { createCocktail, extractTextFromImage, getLiquorData, translateLiquorData } from '../../features/scan/services/ImageProcessing';
+import { createCocktail, extractTextFromImage, getLiquorData, translateLiquorData } from '../../features/scan/services/imageProcessing';
 import WebcamCapture from './WebcamCapture';
 import React, { useEffect } from 'react';
+import CocktailButton from './Cocktails/CocktailButton';
 
-export default function ScanPage() {
+export default function ScanPage({token, user}: {token: string, user: string}) {
     const [image, setImage] = React.useState<string | null>(null);
     const [liquor, setLiquor] = React.useState<Liquor | null>(null);
     const [loading, setLoading] = React.useState({loading: false, text: ""});
     const [recipe, setRecipe] = React.useState<Cocktail | null>(null);
+    const [cocktail, setCocktail] = React.useState<CreateRecipe | null>(null);
 
     useEffect(() => {
         if (!image) return;
@@ -22,6 +24,7 @@ export default function ScanPage() {
 
     useEffect(() => {
         setLoading({loading: false, text: ""});
+        handlePublishCocktail();
     }, [recipe]);
 
     const handleSendImage = async(image: string) => {
@@ -30,12 +33,19 @@ export default function ScanPage() {
     };
 
     const getTextFromImage = async (base64Image: string) => {
-        const text = await extractTextFromImage(base64Image);
-        const filteredText = text.map((str: any) => str.replace(/\s/g, ""))
-          .map((str: any) => str.match(/\d{13}/)?.[0]) // Extract only 13-digit numbers
-          .filter(Boolean);
+        const response = await extractTextFromImage(base64Image);
+        console.log(response);
+        if(response && response.data && response.data.extractTextFromImageBytes)
+        {
 
-        getLiquorDetails(filteredText[0]);
+          const text = response.data.extractTextFromImageBytes.data;
+          const filteredText = text.map((str: any) => str.replace(/\s/g, ""))
+            .map((str: any) => str.match(/\d{13}/)?.[0]) // Extract only 13-digit numbers
+            .filter(Boolean);
+  
+          getLiquorDetails(filteredText[0]);
+        }
+
     }
 
     const getLiquorDetails = async (code: string) => {
@@ -50,21 +60,21 @@ export default function ScanPage() {
         }
 
         const cleanCode = encodeURIComponent(code.trim());
-        //const liquor = await getLiquorData(cleanCode);
+        const liquor = await getLiquorData(cleanCode);
         
-        const liquor = {
-            data: {
-                getProductByCode: {
-                    data: {
-                        "Name": "Vinho Chileno Branco Alto Los Romeros Sauvignon Blanc 750ml",
-                        "Photo_link": "https://go-upc.s3.amazonaws.com/images/130378927.jpeg",
-                        "Description": "As notas cítricas, maçã verde e toques de ervas dominam o paladar, dando um caráter varietal intenso e tensão. Tem excelente persistência, médio corpo e acidez, criando um vinho equilibrado e refrescante.",
-                        "Additional_attributes": "Vintage:",
-                        "isbn": "7804414004844"
-                    }
-                }
-            }
-        };
+        // const liquor = {
+        //     data: {
+        //         getProductByCode: {
+        //             data: {
+        //                 "Name": "Vino",
+        //                 "Photo_link": "https://go-upc.s3.amazonaws.com/images/130378927.jpeg",
+        //                 "Description": "As notas cítricas, maçã verde e toques de ervas dominam o paladar, dando um caráter varietal intenso e tensão. Tem excelente persistência, médio corpo e acidez, criando um vinho equilibrado e refrescante.",
+        //                 "Additional_attributes": "Vintage:",
+        //                 "isbn": "7804414004844"
+        //             }
+        //         }
+        //     }
+        // };
         
         if(!liquor.data || !liquor.data.getProductByCode || !liquor.data.getProductByCode.data) 
         {
@@ -77,13 +87,35 @@ export default function ScanPage() {
 
     const createRecipe = async (liquor: string) => {
         const recipe = await createCocktail(liquor);
-        setRecipe(recipe);
+        
+        if(recipe.data && recipe.data.createAIRecipe && recipe.data.createAIRecipe.data)
+        {
+            setRecipe(recipe.data.createAIRecipe.data);
+        }
+    }
+
+    const handlePublishCocktail = () => {
+        if(recipe)
+        {
+            setCocktail({
+                category: "sweet",
+                creatorId: user,
+                description: recipe.observations || "",
+                ingredients: recipe.ingredients.map((ingredient) => ({
+                    name: ingredient.name,
+                    quantity: ingredient.quantity
+                })),
+                instructions: recipe.steps,
+                name: recipe.cocktailName
+            })
+        }
     }
 
     return (
       <div className="w-full mt-5 mb-20">
+        {cocktail && <CocktailButton user={user} recipe={cocktail} />}
         <div className="flex flex-col items-center gap-6">
-          <WebcamCapture handleSendImage={handleSendImage} liquor={liquor} loading={loading} />
+         {!cocktail && <WebcamCapture handleSendImage={handleSendImage} liquor={liquor} loading={loading} />}
           {liquor && (
             <div className="w-full max-w-md bg-white rounded-lg shadow-md p-6">
               <h2 className="text-2xl font-bold text-orange-600 mb-4">{liquor.Name}</h2>
@@ -118,6 +150,14 @@ export default function ScanPage() {
               )}
             </div>
           )}
+          {cocktail && <div className='w-full flex justify-start'>
+            <button
+              className='bg-orange-600 text-white p-3 rounded-md hover:bg-orange-500 transition-colors'
+              onClick={() => window.location.reload()}
+            >
+              Escanear otra botella
+            </button>
+          </div>}
         </div>
       </div>
     );

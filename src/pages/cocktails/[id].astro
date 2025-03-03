@@ -1,0 +1,98 @@
+---
+import { getAllRecipes, getRecipe } from "../../features/cocktails/services/RecipesService";
+import Layout from "../../ui/layouts/Layout.astro";
+import { Heart } from "lucide-react";
+import Like from "../../ui/components/Cocktails/Like";
+import Rate from "../../ui/components/Cocktails/Rate";
+
+interface Ingredient {
+    name: string;
+    quantity: string;
+}
+
+interface Rating {
+    rating: number;
+    user_id: string;
+}
+
+interface Recipe {
+    _id: string;
+    averageRating: number;
+    category: string;
+    createdAt: string;
+    creatorId: string;
+    description: string;
+    ingredients: Ingredient[];
+    instructions: string[];
+    likes: number;
+    liquors: string[];
+    name: string;
+    rating: number;
+    ratings: Rating[];
+}
+
+export async function getStaticPaths() {
+  const response = await getAllRecipes();
+
+    if(response.data && response.data.recipes && response.data.recipes.data.length > 0) {
+        const data = response.data.recipes.data;
+        
+        return data.map((item: any) => ({
+            params: { item: item._id.toString() },
+        }));
+    }
+    return [];
+}
+
+const user_id = Astro.cookies.get("user-id")?.value || "";
+var item = {} as Recipe;
+
+const { id } = Astro.params;
+const response = await getAllRecipes();
+
+if(response.data && response.data.recipes && response.data.recipes.data.length > 0) {
+    const recipes = response.data.recipes.data;
+
+    item = recipes.find((recipe: Recipe) => recipe._id === id);
+}
+---
+
+<Layout>
+    <div>
+        <div>
+            <img src="https://images.unsplash.com/photo-1551024709-8f23befc6f87?q=80&w=1557&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="">
+        </div>
+        <div class="p-4 pt-0 relative">
+            <div class="flex justify-between items-center sticky top-0 bg-white py-4 z-10">
+                <h1 class="text-2xl text-[#eb6b50] font-bold">{item.name}</h1>
+                <Like item={{ likes: item.likes, id: item._id}} client:load />
+            </div>
+            <div>
+                <p class="text-lg mt-5">{item.description}</p>
+                <h3 class="text-center mt-5">Calífica este Coctel:</h3>
+                <Rate id={item._id} user_id={user_id} client:load />
+            </div>
+            <div>
+                <h2 class="text-xl text-[#eb6b50] font-bold mt-5">Ingredientes</h2>
+                <ul class="list-disc list-inside my-5">
+                    {item.ingredients.map((ingredient: any) => (
+                        <li>{ingredient.name} {ingredient.quantity}</li>
+                    ))}
+                </ul>
+            </div>
+            <div class="mb-20">
+                <h2 class="text-xl text-[#eb6b50] font-bold mt-5">Preparación</h2>
+                {item.instructions.map((step: any, index: number) => (
+                    <div class="flex items-center my-5">
+                        <span class="text-[#eb6b50] font-bold text-xl">{index + 1}.</span>
+                        <p class="ml-2">{step}</p>
+                    </div>
+                ))}
+
+                <p class="text-center mt-5 p-4 bg-[#ffa056] text-white rounded-lg">
+                    Listo! Ahora puedes disfrutar de este delicioso coctel.
+                </p>
+            </div>
+        </div>
+    </div>
+</Layout>

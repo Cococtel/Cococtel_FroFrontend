@@ -2,6 +2,7 @@
 import { number } from 'astro:schema';
 import { examplePosts } from '../../features/blog/constants/examplePosts';
 import Layout from '../../ui/layouts/Layout.astro';
+import { getPosts } from '../../features/blog/services/postService';
 
 
 export async function getStaticPaths() {
@@ -10,23 +11,31 @@ export async function getStaticPaths() {
   }));
 }
 
+var posts:any = [];
 const { id } = Astro.params;
-const post = examplePosts.find((p) => p.id === Number(id));
+
+const response = await getPosts();
+
+if(response.data && response.data.posts && response.data.posts.data.length > 0) {
+    const data = response.data.posts.data;
+    posts = data;
+}
+
+const post = posts.find((p:any) => p._id === id);
 
 if (!post) {
   throw new Error(`Post with id ${id} not found`);
 }
 ---
-
 <Layout>
-    <div class="container mx-auto px-4 py-16">
+    <div class="container mx-auto px-4 py-20">
       <article class="max-w-3xl mx-auto">
         <header class="mb-6">
             <h1 class="text-4xl font-bold mb-10 text-[#eb6b50]">{post.title}</h1>
-            <img src={post.image} alt={post.title} class="w-full h-auto rounded-md mb-4" />
+            <img src={post.urlImage} alt={post.title} class="w-full h-auto rounded-md mb-4" />
             <p class="text-sm text-gray-600">By {post.author} on {post.createdAt}</p>
         </header>
-        <section class="prose prose-lg ProseMirror">
+        <section class="prose prose-lg ProseMirror flex flex-col gap-10">
             <div set:html={post.content}></div>
         </section>
       </article>

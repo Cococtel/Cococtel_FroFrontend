@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import type { UserLogin } from '../../../features/auth/dtos/loginDto';
 import { loginUser } from '../../../features/auth/services/authService';
 import { toast } from "sonner";
+import Logo from '../../../assets/img/logo.png';
 
 export default function LoginForm( { redirectTo }: {redirectTo: string} ) {
   const [username, setUsername] = useState('');
@@ -39,15 +40,18 @@ export default function LoginForm( { redirectTo }: {redirectTo: string} ) {
   return (
     <div className="container mx-auto p-4 h-screen flex justify-center items-center">
       <div className="max-w-lg w-full mx-auto bg-white rounded-xl shadow-md p-8">
+        <div className="flex justify-center mb-6">
+          <img src={Logo.src} alt="App Logo" className="h-32" />
+        </div>
         <h1 className="text-3xl font-bold text-center mb-6 text-[#eb6b50]">Iniciar Sesión</h1>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label htmlFor="email" className="block text-gray-700 font-semibold mb-2">
-              Correo Electrónico
+              Nombre de Usuario
             </label>
             <input
-              type="email"
-              id="email"
+              type="text"
+              id="text"
               className="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-[#eb6b50]"
               value={username}
               onChange={(e) => setUsername(e.target.value)}

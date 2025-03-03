@@ -1,11 +1,12 @@
-import { Home, Scan, Users, User, LogOut } from 'lucide-react';
-import { useState } from 'react';
+import { Home, Scan, Users, User, Martini } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { verifyUserLoginStatus } from '../../features/auth/services/authService';
 
-export default function BottomNav() {
-  const [active, setActive] = useState('Dashboard');
+export default function BottomNav( { token, user } : { token: string, user: string } ) {
 
   const menuItems = [
     { name: 'Dashboard', icon: <Home className="text-[#f97316]" />, link: '/home' },
+    { name: 'Cocktails', icon: <Martini className="text-[#f97316]" />, link: '/cocktails' },
     { name: 'Scan', icon: <Scan className="text-[#f97316]" />, link: '/scan' },
     { name: 'Community', icon: <Users className="text-[#f97316]" />, link: '/community' },
     { name: 'Profile', icon: <User className="text-[#f97316]" />, link: '/profile' }
@@ -17,11 +18,9 @@ export default function BottomNav() {
         <a 
           key={name} 
           href={link} 
-          onClick={() => setActive(name)}
           className={`flex flex-col items-center text-gray-700 transition-all duration-200`}
         >
           {icon}
-          {/* <span className="text-sm mt-1">{name}</span> */}
         </a>
       ))}
     </div>

@@ -3,20 +3,22 @@ import { user_edit_profile_mutation, user_profile_mutation } from "../../../netw
 import type { EditUserProfile } from "../dtos/editUserProfileTdto";
 import type { GetUserProfile } from "../dtos/getProfileDto";
 
-export const getProfileData = async (request: GetUserProfile) => {
+export const getProfileData = async (request: GetUserProfile, token: string) => {
     return await graphqlRequest(user_profile_mutation, {
         id: request.id,
-        token: "Bearer " + request.token
+        token
     });
 }
 
-export const updateProfileData = async (request: EditUserProfile) => {
+export const updateProfileData = async (request: EditUserProfile, token: string) => {
     console.log(request);
     return await graphqlRequest(user_edit_profile_mutation, {
         name: request.name,
         lastname: request.lastname || "",
         email: request.email,
         phone: "",
-        token: "Bearer " + request.token
+        username: request.username,
+        image: request.image,
+        token: token
       })
 }

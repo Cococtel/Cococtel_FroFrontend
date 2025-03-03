@@ -1,6 +1,8 @@
 ---
 import Sidebar from "../components/Sidebar";
 import { Toaster } from 'sonner'
+const token = Astro.cookies.get("auth-token")?.value || "";
+const user = Astro.cookies.get("user-id")?.value || "";
 ---
 
 <!doctype html>
@@ -16,10 +18,14 @@ import { Toaster } from 'sonner'
 		<title>Cococtel</title>
 	</head>
 	<body>
-		<div class="flex">
+		<div>
 			<a href="/profile" class="w-12 h-12 flex items-center justify-center text-2xl text-white rounded-full bg-[#eb6b50] absolute top-5 right-5">T</a>
 			<Toaster client:load />
-			<Sidebar client:visible />
+			<Sidebar 
+				token={token}
+				user={user}
+				client:visible 
+			/>
 			<slot />
 		</div>
 	</body>
@@ -47,6 +53,7 @@ import { Toaster } from 'sonner'
 
 	.ProseMirror h2{
 		font-size: 1.7rem;
+		margin-top: 20px;
 	}
 
 	.ProseMirror h3{
