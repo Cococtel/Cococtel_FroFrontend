@@ -1,5 +1,5 @@
 import { toast } from 'sonner';
-import { createCocktail, extractTextFromImage, getLiquorData, translateLiquorData } from '../../features/scan/services/imageProcessing';
+import { createCocktail, extractTextFromImage, getLiquorData, translateLiquorData } from '../../features/scan/services/ComputerVision';
 import WebcamCapture from './WebcamCapture';
 import React, { useEffect } from 'react';
 import CocktailButton from './Cocktails/CocktailButton';
